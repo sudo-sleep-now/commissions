@@ -9,248 +9,144 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;700&display=swap" rel="stylesheet"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --pink: #D4537E;
     --pink-light: #FBEAF0;
-    --pink-mid: #ED93B1;
     --pink-dark: #72243E;
+    --pink-border: rgba(212,83,126,0.28);
     --green: #3B6D11;
     --green-light: #EAF3DE;
     --green-border: #C0DD97;
     --bg: #fdf8f9;
     --surface: #ffffff;
-    --border: rgba(212, 83, 126, 0.15);
-    --border-strong: rgba(212, 83, 126, 0.3);
+    --border: rgba(212,83,126,0.13);
     --text: #1a1015;
-    --text-muted: #6e5060;
-    --text-faint: #b090a0;
+    --muted: #6e5060;
+    --faint: #b090a0;
     --mono: 'DM Mono', monospace;
     --sans: 'Syne', sans-serif;
   }
-
   html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+  .wrap { max-width: 580px; margin: 0 auto; padding: 0 1.25rem 4rem; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* noise texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 200px;
-  }
-
-  .wrap {
-    position: relative;
-    z-index: 1;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 0 1.25rem 4rem;
-  }
-
-  /* ── banner ── */
   .banner {
-    height: 100px;
-    background: linear-gradient(135deg, #f7c5d8 0%, #ffb6c1 50%, #f9d4e4 100%);
-    border-radius: 0 0 16px 16px;
+    height: 90px;
+    background: linear-gradient(135deg, #f7c5d8 0%, #ffb6c1 60%, #f9d4e4 100%);
+    border-radius: 0 0 14px 14px;
     margin: 0 -1.25rem;
     position: relative;
-    overflow: hidden;
   }
-  .banner::after {
-    content: 'processing...';
+  .banner-label {
     font-family: var(--mono);
     font-size: 11px;
     color: rgba(114,36,62,0.4);
     position: absolute;
-    bottom: 10px;
-    right: 16px;
+    bottom: 10px; right: 16px;
     letter-spacing: 0.05em;
   }
 
-  /* ── profile ── */
   .profile {
     padding: 0 0 1.5rem;
     border-bottom: 1px solid var(--border);
     margin-bottom: 2rem;
-    animation: fadeUp 0.5s ease both;
+    animation: fadeUp 0.45s ease both;
   }
-
   .avatar-row {
-    display: flex;
-    align-items: flex-end;
+    display: flex; align-items: flex-end;
     justify-content: space-between;
-    margin-top: -28px;
-    margin-bottom: 14px;
+    margin-top: -28px; margin-bottom: 14px;
   }
   .avatar {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    background: #f4c0d1;
+    width: 58px; height: 58px; border-radius: 50%;
     border: 3px solid var(--bg);
-    position: relative;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px;
-    flex-shrink: 0;
+    overflow: hidden; position: relative; flex-shrink: 0;
+    background: #f4c0d1;
   }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .avatar-dot {
-    width: 13px; height: 13px;
-    border-radius: 50%;
-    background: #639922;
-    border: 2px solid var(--bg);
-    position: absolute;
-    bottom: 1px; right: 1px;
+    width: 13px; height: 13px; border-radius: 50%;
+    background: #639922; border: 2px solid var(--bg);
+    position: absolute; bottom: 1px; right: 1px;
   }
-  .name-row {
-    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
-    margin-bottom: 2px;
-  }
+  .name-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
   .name { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
-  .handle { font-family: var(--mono); font-size: 13px; color: var(--text-muted); }
+  .handle { font-family: var(--mono); font-size: 13px; color: var(--muted); }
   .pronoun {
-    font-size: 11px;
-    font-family: var(--mono);
-    background: var(--pink-light);
-    color: var(--pink-dark);
-    padding: 2px 7px;
-    border-radius: 20px;
-    border: 1px solid var(--border-strong);
+    font-family: var(--mono); font-size: 11px;
+    background: var(--pink-light); color: var(--pink-dark);
+    padding: 2px 8px; border-radius: 20px;
+    border: 1px solid var(--pink-border);
   }
-  .bio {
-    font-size: 13px;
-    font-family: var(--mono);
-    font-style: italic;
-    color: var(--text-muted);
-    margin: 8px 0 12px;
-    line-height: 1.6;
-  }
+  .bio { font-family: var(--mono); font-size: 13px; font-style: italic; color: var(--muted); margin: 8px 0 12px; line-height: 1.6; }
   .tags { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tag {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    border: 1px solid var(--border-strong);
-    color: var(--text-muted);
-  }
+  .tag { font-family: var(--mono); font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--pink-border); color: var(--muted); }
   .tag.open { background: var(--green-light); color: var(--green); border-color: var(--green-border); }
 
-  /* ── section label ── */
-  .label {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--text-faint);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
+  .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--faint); text-transform: uppercase; margin-bottom: 14px; }
 
-  /* ── form ── */
-  .form-wrap {
-    animation: fadeUp 0.5s 0.1s ease both;
+  .form-wrap { animation: fadeUp 0.45s 0.08s ease both; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-family: var(--mono); font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+  .field input, .field textarea, .field select {
+    width: 100%; font-family: var(--mono); font-size: 13px; color: var(--text);
+    background: var(--surface); border: 1px solid var(--pink-border);
+    border-radius: 8px; padding: 10px 12px; outline: none;
+    transition: border-color 0.15s; -webkit-appearance: none; appearance: none;
   }
-
-  .field { margin-bottom: 16px; }
-  .field label {
-    display: block;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-  .field input,
-  .field textarea,
-  .field select {
-    width: 100%;
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text);
-    background: var(--surface);
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 10px 12px;
-    outline: none;
-    transition: border-color 0.15s;
-    -webkit-appearance: none;
-  }
-  .field input:focus,
-  .field textarea:focus,
-  .field select:focus { border-color: var(--pink); }
-  .field input::placeholder,
-  .field textarea::placeholder { color: var(--text-faint); }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--pink); }
+  .field input::placeholder, .field textarea::placeholder { color: var(--faint); }
   .field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
-
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
   .submit-btn {
-    width: 100%;
-    margin-top: 4px;
-    padding: 12px;
-    font-family: var(--sans);
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    background: var(--pink);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
+    width: 100%; margin-top: 6px; padding: 12px;
+    font-family: var(--sans); font-size: 15px; font-weight: 700;
+    background: var(--pink); color: #fff; border: none; border-radius: 8px;
+    cursor: pointer; transition: background 0.15s, transform 0.1s, opacity 0.15s;
   }
   .submit-btn:hover { background: var(--pink-dark); }
   .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
-  /* ── success ── */
-  .success {
-    display: none;
-    background: var(--green-light);
-    border: 1px solid var(--green-border);
-    border-radius: 10px;
-    padding: 1.5rem;
-    text-align: center;
+  .success-box {
+    display: none; background: var(--green-light);
+    border: 1px solid var(--green-border); border-radius: 10px;
+    padding: 1.5rem; text-align: center;
     animation: fadeUp 0.3s ease both;
   }
-  .success-title { font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
-  .success-sub { font-family: var(--mono); font-size: 12px; color: #3B6D11; }
+  .success-box .s-title { font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+  .success-box .s-sub { font-family: var(--mono); font-size: 12px; color: #3B6D11; line-height: 1.7; }
 
-  /* ── footer ── */
+  .error-box {
+    display: none; background: #FCEBEB; border: 1px solid #F09595;
+    border-radius: 8px; padding: 10px 14px; margin-top: 10px;
+    font-family: var(--mono); font-size: 12px; color: #A32D2D; line-height: 1.6;
+  }
+
   .footer {
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
+    margin-top: 2.5rem; padding-top: 1.5rem;
     border-top: 1px solid var(--border);
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-faint);
-    line-height: 1.9;
-    text-align: center;
+    font-family: var(--mono); font-size: 11px; color: var(--faint);
+    line-height: 2; text-align: center;
   }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
   }
+  @media (max-width: 420px) { .field-row { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
-<div class="banner"></div>
+<div class="banner"><span class="banner-label">processing...</span></div>
 
 <div class="wrap">
   <div class="profile">
     <div class="avatar-row">
       <div class="avatar">
-        🌸
+        <img src="image.png"/>
         <div class="avatar-dot"></div>
       </div>
     </div>
@@ -269,7 +165,6 @@
 
   <div class="form-wrap">
     <p class="label">// commission request</p>
-
     <div id="form">
       <div class="field-row">
         <div class="field">
@@ -281,7 +176,6 @@
           <input type="email" id="email" placeholder="for updates"/>
         </div>
       </div>
-
       <div class="field">
         <label>what do you need?</label>
         <select id="type">
@@ -292,12 +186,10 @@
           <option value="other">literally anything else</option>
         </select>
       </div>
-
       <div class="field">
         <label>describe the project</label>
         <textarea id="desc" placeholder="more detail = less back-and-forth. no such thing as too much info."></textarea>
       </div>
-
       <div class="field-row">
         <div class="field">
           <label>budget</label>
@@ -314,33 +206,96 @@
           </select>
         </div>
       </div>
-
-      <button class="submit-btn" onclick="submitForm()">disturb my nap →</button>
+      <button class="submit-btn" id="submitBtn" onclick="submitForm()">disturb my nap →</button>
+      <div class="error-box" id="errorBox"></div>
     </div>
-
-    <div class="success" id="success">
-      <div class="success-title">request received</div>
-      <div class="success-sub">i'll slide into your dms when i'm awake.<br>could be a while.</div>
+    <div class="success-box" id="success">
+      <div class="s-title">request received</div>
+      <div class="s-sub">i'll slide into your dms when i'm awake.<br>could be a while.</div>
     </div>
   </div>
 
   <div class="footer">
-    no refunds after work starts<br>
-    i reserve the right to refuse
+    50% upfront on larger projects &nbsp;·&nbsp; no refunds after work starts<br>
+    payments via ko-fi / paypal &nbsp;·&nbsp; i reserve the right to refuse
   </div>
 </div>
 
 <script>
-function submitForm() {
-  const discord = document.getElementById('discord').value.trim();
-  const desc = document.getElementById('desc').value.trim();
+const WEBHOOK = "https://discord.com/api/webhooks/1491071572159500470/9P5pjNglDWXHc0inTxK4_amuhPm-SbjlcpQo7Xz-WhUaDiE-VsjLAquUcHc2bvzBZtCl";
+
+const TYPE_LABELS = {
+  code: "code / scripts / automation",
+  web: "web / frontend",
+  bot: "discord bot",
+  other: "literally anything else",
+  "": "not specified"
+};
+
+const DEADLINE_LABELS = {
+  flex: "totally flexible",
+  asap: "asap (rush fee)",
+  "1w": "within a week",
+  "2w": "within 2 weeks",
+  "1m": "within a month"
+};
+
+async function submitForm() {
+  const discord  = document.getElementById("discord").value.trim();
+  const email    = document.getElementById("email").value.trim();
+  const type     = document.getElementById("type").value;
+  const desc     = document.getElementById("desc").value.trim();
+  const budget   = document.getElementById("budget").value.trim();
+  const deadline = document.getElementById("deadline").value;
+  const btn      = document.getElementById("submitBtn");
+  const errBox   = document.getElementById("errorBox");
+
+  errBox.style.display = "none";
+
   if (!discord || !desc) {
-    alert('discord tag and project description are required!');
+    errBox.textContent = "discord tag and project description are required.";
+    errBox.style.display = "block";
     return;
   }
-  document.getElementById('form').style.display = 'none';
-  const s = document.getElementById('success');
-  s.style.display = 'block';
+
+  btn.disabled = true;
+  btn.textContent = "sending...";
+
+  const payload = {
+    username: "commissions",
+    embeds: [{
+      title: "🌸 new commission request",
+      color: 0xD4537E,
+      fields: [
+        { name: "discord",   value: discord,                        inline: true  },
+        { name: "email",     value: email || "not provided",        inline: true  },
+        { name: "type",      value: TYPE_LABELS[type],              inline: true  },
+        { name: "budget",    value: budget || "not specified",       inline: true  },
+        { name: "deadline",  value: DEADLINE_LABELS[deadline],      inline: true  },
+        { name: "description", value: desc }
+      ],
+      timestamp: new Date().toISOString()
+    }]
+  };
+
+  try {
+    const res = await fetch(WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok || res.status === 204) {
+      document.getElementById("form").style.display = "none";
+      document.getElementById("success").style.display = "block";
+    } else {
+      throw new Error("status " + res.status);
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = "disturb my nap →";
+    errBox.textContent = "something went wrong. try again or dm me directly.";
+    errBox.style.display = "block";
+  }
 }
 </script>
 </body>
