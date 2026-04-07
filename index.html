@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>sudo.sleep_ — commissions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pink: #D4537E;
+    --pink-light: #FBEAF0;
+    --pink-mid: #ED93B1;
+    --pink-dark: #72243E;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --green-border: #C0DD97;
+    --bg: #fdf8f9;
+    --surface: #ffffff;
+    --border: rgba(212, 83, 126, 0.15);
+    --border-strong: rgba(212, 83, 126, 0.3);
+    --text: #1a1015;
+    --text-muted: #6e5060;
+    --text-faint: #b090a0;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 1.25rem 4rem;
+  }
+
+  /* ── banner ── */
+  .banner {
+    height: 100px;
+    background: linear-gradient(135deg, #f7c5d8 0%, #ffb6c1 50%, #f9d4e4 100%);
+    border-radius: 0 0 16px 16px;
+    margin: 0 -1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .banner::after {
+    content: 'processing...';
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(114,36,62,0.4);
+    position: absolute;
+    bottom: 10px;
+    right: 16px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── profile ── */
+  .profile {
+    padding: 0 0 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .avatar-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: -28px;
+    margin-bottom: 14px;
+  }
+  .avatar {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: #f4c0d1;
+    border: 3px solid var(--bg);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+  .avatar-dot {
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: #639922;
+    border: 2px solid var(--bg);
+    position: absolute;
+    bottom: 1px; right: 1px;
+  }
+  .name-row {
+    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 2px;
+  }
+  .name { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+  .handle { font-family: var(--mono); font-size: 13px; color: var(--text-muted); }
+  .pronoun {
+    font-size: 11px;
+    font-family: var(--mono);
+    background: var(--pink-light);
+    color: var(--pink-dark);
+    padding: 2px 7px;
+    border-radius: 20px;
+    border: 1px solid var(--border-strong);
+  }
+  .bio {
+    font-size: 13px;
+    font-family: var(--mono);
+    font-style: italic;
+    color: var(--text-muted);
+    margin: 8px 0 12px;
+    line-height: 1.6;
+  }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border-strong);
+    color: var(--text-muted);
+  }
+  .tag.open { background: var(--green-light); color: var(--green); border-color: var(--green-border); }
+
+  /* ── section label ── */
+  .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  /* ── form ── */
+  .form-wrap {
+    animation: fadeUp 0.5s 0.1s ease both;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus { border-color: var(--pink); }
+  .field input::placeholder,
+  .field textarea::placeholder { color: var(--text-faint); }
+  .field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: 4px;
+    padding: 12px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    background: var(--pink);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .submit-btn:hover { background: var(--pink-dark); }
+  .submit-btn:active { transform: scale(0.98); }
+
+  /* ── success ── */
+  .success {
+    display: none;
+    background: var(--green-light);
+    border: 1px solid var(--green-border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    animation: fadeUp 0.3s ease both;
+  }
+  .success-title { font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+  .success-sub { font-family: var(--mono); font-size: 12px; color: #3B6D11; }
+
+  /* ── footer ── */
+  .footer {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    line-height: 1.9;
+    text-align: center;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="banner"></div>
+
+<div class="wrap">
+  <div class="profile">
+    <div class="avatar-row">
+      <div class="avatar">
+        🌸
+        <div class="avatar-dot"></div>
+      </div>
+    </div>
+    <div class="name-row">
+      <span class="name">408</span>
+      <span class="handle">sudo.sleep_</span>
+      <span class="pronoun">they/them</span>
+    </div>
+    <p class="bio">"Manual labor is just poorly written code."</p>
+    <div class="tags">
+      <span class="tag">⚡ efficiently lazy</span>
+      <span class="tag open">✦ commissions open</span>
+      <span class="tag">📦 dm to hire/disturb nap</span>
+    </div>
+  </div>
+
+  <div class="form-wrap">
+    <p class="label">// commission request</p>
+
+    <div id="form">
+      <div class="field-row">
+        <div class="field">
+          <label>discord tag</label>
+          <input type="text" id="discord" placeholder="username or user#0000" autocomplete="off"/>
+        </div>
+        <div class="field">
+          <label>email (optional)</label>
+          <input type="email" id="email" placeholder="for updates"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>what do you need?</label>
+        <select id="type">
+          <option value="">— pick a type —</option>
+          <option value="code">code / scripts / automation</option>
+          <option value="web">web / frontend</option>
+          <option value="bot">discord bot</option>
+          <option value="other">literally anything else</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>describe the project</label>
+        <textarea id="desc" placeholder="more detail = less back-and-forth. no such thing as too much info."></textarea>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>budget</label>
+          <input type="text" id="budget" placeholder="$ range or 'no idea'"/>
+        </div>
+        <div class="field">
+          <label>deadline</label>
+          <select id="deadline">
+            <option value="flex">totally flexible</option>
+            <option value="asap">asap (rush fee)</option>
+            <option value="1w">within a week</option>
+            <option value="2w">within 2 weeks</option>
+            <option value="1m">within a month</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="submitForm()">disturb my nap →</button>
+    </div>
+
+    <div class="success" id="success">
+      <div class="success-title">request received</div>
+      <div class="success-sub">i'll slide into your dms when i'm awake.<br>could be a while.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    no refunds after work starts<br>
+    i reserve the right to refuse
+  </div>
+</div>
+
+<script>
+function submitForm() {
+  const discord = document.getElementById('discord').value.trim();
+  const desc = document.getElementById('desc').value.trim();
+  if (!discord || !desc) {
+    alert('discord tag and project description are required!');
+    return;
+  }
+  document.getElementById('form').style.display = 'none';
+  const s = document.getElementById('success');
+  s.style.display = 'block';
+}
+</script>
+</body>
+</html>
