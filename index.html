@@ -263,7 +263,7 @@ async function submitForm() {
 
   const payload = {
     username: "408 Commission Helper",
-    content: "New commission CHOP!! CHOP!!1! @commission_ping",
+    content: "New commission CHOP!! CHOP!!1! @<1491095130583728290>",
     embeds: [{
       title: "🌸 new commission request",
       color: 0xD4537E,
@@ -275,7 +275,7 @@ async function submitForm() {
         { name: "deadline",  value: DEADLINE_LABELS[deadline],      inline: true  },
         { name: "description", value: desc }
       ],
-      image_url: "https://github.com/sudo-sleep-now/commissions/blob/main/helper_image.jpeg?raw=true",
+      image: "https://github.com/sudo-sleep-now/commissions/blob/main/helper_image.jpeg?raw=true",
       timestamp: new Date().toISOString()
     }]
   };
